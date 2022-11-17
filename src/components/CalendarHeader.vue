@@ -15,7 +15,7 @@ const dateFormatToMainTitle = (inputDate: Date) => {
 
 <template>
 <section
-  class="flex items-center border px-3 py-4 space-x-2 w-full box-border"
+  class="flex items-center px-3 py-4 space-x-2 w-full box-border"
 >
   <div class="flex items-center flex-grow">
     <div
