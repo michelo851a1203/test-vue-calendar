@@ -1,9 +1,20 @@
 <script setup lang="ts">
+import { useCalendar } from '../composable/calendar';
 import CalendarWeekTitle from './CalendarWeekTitle.vue';
 const props = withDefaults(defineProps<{
   currentDate: Date;
 }>(), {
 })
+
+const {
+  getFirstCalendarDate,
+  getLastCalendarDate,
+  getCurrentCalendarArray,
+} = useCalendar(props.currentDate);
+
+console.log(`%c start: ${getFirstCalendarDate.value}`, 'color: red;');
+console.log(getCurrentCalendarArray.value);
+console.log(`%c end: ${getLastCalendarDate.value}`, 'color: red;');
 
 
 
@@ -18,7 +29,9 @@ const props = withDefaults(defineProps<{
       class="mt-2"
     >
       <CalendarWeekTitle></CalendarWeekTitle>
+      <section>
 
+      </section>
     </section>
   </section>
 </template>

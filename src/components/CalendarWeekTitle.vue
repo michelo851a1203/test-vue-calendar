@@ -1,13 +1,9 @@
 <script setup lang="ts">
-const weekName = [
-  '週日', 
-  '週一', 
-  '週二', 
-  '週三', 
-  '週四', 
-  '週五', 
-  '週六', 
-];
+import { useCalendar } from '../composable/calendar';
+
+const {
+  weekName,
+} = useCalendar()
 
 </script>
 
