@@ -1,5 +1,17 @@
 import { computed, ref } from 'vue';
 
+export interface CalendarRowType {
+  id: string;
+  content: CalendarContentType[];
+}
+
+export interface CalendarContentType {
+  id: string;
+  calendarDate: string;
+  eventTitle: string;
+  holiday: string;
+}
+
 export function useCalendar(inputDate?: Date) {
   const currentDate = ref(inputDate ?? new Date());
 
@@ -12,6 +24,10 @@ export function useCalendar(inputDate?: Date) {
     '週五', 
     '週六', 
   ];
+
+  const generatedRandomId = () => {
+    return Math.random().toString(16).slice(2);
+  }
 
   const addDate = (
     addNumber: number, 
@@ -54,16 +70,28 @@ export function useCalendar(inputDate?: Date) {
   })
 
   const getCurrentCalendarArray = computed(() => {
-    const calendarArray: string[][] = [];
-    let tempArray: string[] = [];
+    const calendarArray: CalendarRowType[] = [];
+    let tempArray: CalendarContentType[] = [];
     let targetDate = getFirstCalendarDate.value;
     const endDate = addDate(1, getLastCalendarDate.value);
 
-    while(targetDate.getMonth() !== endDate.getMonth() || targetDate.getDate() !== endDate.getDate()) {
-      tempArray.push(`${targetDate.getMonth() + 1}/${targetDate.getDate()}`);
+    while(
+      targetDate.getMonth() !== endDate.getMonth() || 
+      targetDate.getDate() !== endDate.getDate()
+    ) {
+      const entry: CalendarContentType = {
+        id: generatedRandomId(),
+        calendarDate: `${targetDate.getMonth() + 1}/${targetDate.getDate()}`,
+        eventTitle: 'aaa',
+        holiday: '重陽節',
+      }
+      tempArray.push(entry);
       addDate(1,targetDate);
       if (tempArray.length !== 7) continue;
-      calendarArray.push(tempArray);
+      calendarArray.push({
+        id: generatedRandomId(),
+        content: tempArray,
+      });
       tempArray = [];
     }
     return calendarArray;
@@ -72,6 +100,7 @@ export function useCalendar(inputDate?: Date) {
   return {
     currentDate,
     weekName,
+    generatedRandomId,
     addDate,
     addMonth,
     getFirstDayDateOfCurrent,
