@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, Ref } from 'vue';
 
 export interface CalendarRowType {
   id: string;
@@ -12,8 +12,28 @@ export interface CalendarContentType {
   holiday: string;
 }
 
-export function useCalendar(inputDate?: Date) {
+export interface CalendarOptionsType {
+  holidayList?: CalendarHolidayType[];
+  eventList?: CalendarEventType[];
+}
+
+export interface CalendarEventType {
+  dateTitle: string;
+  eventName: string;
+}
+
+export interface CalendarHolidayType {
+  dateTitle: string;
+  HolidayName: string;
+}
+
+export function useCalendar(
+  inputDate?: Date,
+  options?: CalendarOptionsType
+) {
   const currentDate = ref(inputDate ?? new Date());
+  const currentHolidayList: Ref<CalendarHolidayType[]> = ref(options?.holidayList ?? []);
+  const currentEventList: Ref<CalendarEventType[]> = ref(options?.eventList ?? []);
 
   const weekName = [
     '週日', 
@@ -57,6 +77,14 @@ export function useCalendar(inputDate?: Date) {
     return addDate(-1, nextMonthCurrent);
   }
 
+  const setNewHolidayList = (holidayList: CalendarHolidayType[]) => {
+    currentHolidayList.value = holidayList;
+  }
+
+  const setNewEventList = (eventList: CalendarEventType[]) => {
+    currentEventList.value = eventList;
+  }
+
   const getFirstCalendarDate = computed(() => {
     const firstDayDate = getFirstDayDateOfCurrent();
     const firstDayOfWeek = firstDayDate.getDay();
@@ -79,12 +107,25 @@ export function useCalendar(inputDate?: Date) {
       targetDate.getMonth() !== endDate.getMonth() || 
       targetDate.getDate() !== endDate.getDate()
     ) {
+
+      const calendarDate = `${targetDate.getMonth() + 1}/${targetDate.getDate()}`;
       const entry: CalendarContentType = {
         id: generatedRandomId(),
-        calendarDate: `${targetDate.getMonth() + 1}/${targetDate.getDate()}`,
-        eventTitle: 'aaa',
-        holiday: '重陽節',
+        calendarDate,
+        eventTitle: '',
+        holiday: '',
       }
+
+      const holidayObject = currentHolidayList.value.find(
+        holidayItem => holidayItem.dateTitle === calendarDate
+      );
+      if (holidayObject) { entry.holiday = holidayObject.HolidayName; }
+
+      const eventObject = currentEventList.value.find(
+        eventItem => eventItem.dateTitle === calendarDate
+      );
+      if (eventObject) { entry.eventTitle = eventObject.eventName; }
+
       tempArray.push(entry);
       addDate(1,targetDate);
       if (tempArray.length !== 7) continue;
@@ -99,12 +140,16 @@ export function useCalendar(inputDate?: Date) {
 
   return {
     currentDate,
+    currentHolidayList,
+    currentEventList,
     weekName,
     generatedRandomId,
     addDate,
     addMonth,
     getFirstDayDateOfCurrent,
     getLastDayDateOfCurrent,
+    setNewHolidayList,
+    setNewEventList,
     getFirstCalendarDate,
     getLastCalendarDate,
     getCurrentCalendarArray,
