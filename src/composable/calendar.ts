@@ -35,7 +35,7 @@ export function useCalendar(
   const currentHolidayList: Ref<CalendarHolidayType[]> = ref(options?.holidayList ?? []);
   const currentEventList: Ref<CalendarEventType[]> = ref(options?.eventList ?? []);
 
-  const weekName = [
+  const weekName = ref([
     '週日', 
     '週一', 
     '週二', 
@@ -43,7 +43,7 @@ export function useCalendar(
     '週四', 
     '週五', 
     '週六', 
-  ];
+  ]);
 
   const generatedRandomId = () => {
     return Math.random().toString(16).slice(2);
@@ -84,6 +84,15 @@ export function useCalendar(
   const setNewEventList = (eventList: CalendarEventType[]) => {
     currentEventList.value = eventList;
   }
+
+  const dateFormatToMainTitle = (inputDate: Date) => {
+    const yyyy = inputDate.getFullYear();
+    let MM = (inputDate.getMonth() + 1).toString();
+    if (MM.length === 1) { MM = `0${MM}` }
+    return `${yyyy}年${MM}月`
+  }
+
+  const currentMonth = computed(() => currentDate.value.getMonth());
 
   const getFirstCalendarDate = computed(() => {
     const firstDayDate = getFirstDayDateOfCurrent();
@@ -150,6 +159,8 @@ export function useCalendar(
     getLastDayDateOfCurrent,
     setNewHolidayList,
     setNewEventList,
+    dateFormatToMainTitle,
+    currentMonth,
     getFirstCalendarDate,
     getLastCalendarDate,
     getCurrentCalendarArray,

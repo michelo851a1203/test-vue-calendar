@@ -1,14 +1,28 @@
 <script setup lang="ts">
+import { useCalendar } from '../composable/calendar';
+
 const props = withDefaults(defineProps<{
   currentDate: Date;
 }>(), {
 })
 
-const dateFormatToMainTitle = (inputDate: Date) => {
-  const yyyy = inputDate.getFullYear();
-  let MM = (inputDate.getMonth() + 1).toString();
-  if (MM.length === 1) { MM = `0${MM}` }
-  return `${yyyy}年${MM}月`
+const emit = defineEmits<{
+  (e: 'update:currentDate', inputDate: Date): void;
+}>()
+
+const {
+  dateFormatToMainTitle,
+  addMonth,
+} = useCalendar();
+
+const previewMonthClick = () => {
+  const previousMonth = addMonth(-1, props.currentDate);
+  emit('update:currentDate', previousMonth);
+}
+
+const nextMonthClick = () => {
+  const previousMonth = addMonth(1, props.currentDate);
+  emit('update:currentDate', previousMonth);
 }
 
 </script>
@@ -24,9 +38,11 @@ const dateFormatToMainTitle = (inputDate: Date) => {
       {{ dateFormatToMainTitle(currentDate) }}
     </div>
     <button
+      @click="previewMonthClick"
       class="i-uil-angle-left-b text-lg cursor-pointer"
     ></button>
     <button
+      @click="nextMonthClick"
       class="i-uil-angle-right-b text-lg cursor-pointer"
     >
     </button>
