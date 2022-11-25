@@ -105,7 +105,10 @@ export function useCalendar(
     return dateFormatToMainTitle(dateFromCalendarSimplified);
   }
 
-  const currentMonth: ComputedRef<number> = computed(() => currentDate.value.getMonth());
+  const currentMonth: ComputedRef<number> = computed(() => {
+    if (currentDate.value.getMonth() === 0) return 12;
+    return currentDate.value.getMonth();
+  });
 
   const getFirstCalendarDate: ComputedRef<Date> = computed(() => {
     const firstDayDate = getFirstDayDateOfCurrent();
