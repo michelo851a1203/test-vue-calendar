@@ -18,6 +18,12 @@ export interface CalendarOptionsType {
 }
 
 export interface CalendarEventType {
+  id: string;
+  dateTitle: string;
+  eventName: string;
+}
+
+export interface AddedCalendarEventType {
   dateTitle: string;
   eventName: string;
 }
@@ -52,6 +58,32 @@ export function useCalendar(
 
   const setCurrentDate = (newDate: Date) => {
     currentDate.value = newDate;
+  }
+
+  const setCurrentHolidayList = (newHolidayList: CalendarHolidayType[]): void => {
+    currentHolidayList.value = newHolidayList;
+  }
+
+  const setCurrentEventList = (newEventList: CalendarEventType[]): void => {
+    currentEventList.value = newEventList;
+  }
+
+  const addEvent = (newEvent: AddedCalendarEventType): string => {
+    const newEventInfo: CalendarEventType = {
+      id: generatedRandomId(),
+      dateTitle: newEvent.dateTitle,
+      eventName: newEvent.eventName,
+    }
+    currentEventList.value.push(newEventInfo);
+    return newEventInfo.id;
+  }
+
+  const deleteEvent = (id: string) => {
+    const deleteIndex = currentEventList.value.findIndex(
+      item => item.id === id
+    );
+    if (deleteIndex === -1) return;
+    currentEventList.value.splice(deleteIndex, 1);
   }
 
   const addDate = (
@@ -170,6 +202,10 @@ export function useCalendar(
     weekName,
     generatedRandomId,
     setCurrentDate,
+    setCurrentHolidayList,
+    setCurrentEventList,
+    addEvent,
+    deleteEvent,
     addDate,
     addMonth,
     getFirstDayDateOfCurrent,

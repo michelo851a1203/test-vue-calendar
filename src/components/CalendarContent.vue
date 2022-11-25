@@ -1,24 +1,36 @@
 <script setup lang="ts">
-import { useCalendar } from '../composable/calendar';
+import {
+  AddedCalendarEventType,
+  useCalendar,
+} from '../composable/calendar';
 import type { CalendarContentType } from '../composable/calendar'
 import { watch } from 'vue';
 const props = withDefaults(defineProps<{
   currentDate: Date;
+  newEvent: AddedCalendarEventType | null;
 }>(), {
 })
 
 const emit = defineEmits<{
   (e: 'update:editEvent', inputEvent: CalendarContentType): void;
+  (e: 'update:returnNewEventResponse', id: string): void;
 }>()
 
 const {
   getCurrentCalendarArray,
   currentMonth,
   setCurrentDate,
+  addEvent,
 } = useCalendar(props.currentDate);
 
 watch(() => props.currentDate, (newUpdatedCurrentDate: Date) => {
   setCurrentDate(newUpdatedCurrentDate);
+});
+
+watch(() => props.newEvent, (newEventInfo: AddedCalendarEventType | null) => {
+  if (newEventInfo === null) return;
+  const id = addEvent(newEventInfo);
+  emit('update:returnNewEventResponse', id);
 });
 
 const emitEventFromContentToCalendar = (inputEvent: CalendarContentType) => {

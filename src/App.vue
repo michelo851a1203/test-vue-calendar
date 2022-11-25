@@ -1,21 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, Ref } from 'vue';
 import Calendar from './components/Calendar.vue';
 import type { 
-  CalendarContentType,
+  AddedCalendarEventType,
+  CalendarContentType, 
 } from './composable/calendar';
 const currentDate = ref((new Date()).toDateString());
+const addedNewEvent: Ref<AddedCalendarEventType | null> = ref(null);
 
-const testEvent = (input: CalendarContentType) => {
+const getCurrentEvent = (input: CalendarContentType) => {
   console.log(input);
+}
+
+const addOrUpdateEvent = () => {
+  addedNewEvent.value = {
+    dateTitle: '12/5',
+    eventName: 'testing'
+  }
 }
 
 </script>
 
 <template>
   <Calendar
+    v-model:newEvent="addedNewEvent"
     v-model:currentDate="currentDate"
-    @update:editEvent="testEvent"
+    @update:editEvent="getCurrentEvent"
   ></Calendar>
 </template>
 
