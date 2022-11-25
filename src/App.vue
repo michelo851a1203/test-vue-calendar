@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, Ref } from 'vue';
 import CalendarHeader from './components/CalendarHeader.vue';
 import Calendar from './components/Calendar.vue';
-import type { CalendarContentType } from './composable/calendar';
+import type { 
+  CalendarContentType,
+  CalendarSimplifiedType,
+} from './composable/calendar';
 const currentDate = ref(new Date());
+const testDate: Ref<CalendarSimplifiedType> = ref({
+  year: currentDate.value.getFullYear(),
+  month: currentDate.value.getMonth() + 1,
+})
 
 const testEvent = (input: CalendarContentType) => {
   console.log(input);
@@ -18,7 +25,7 @@ const testEvent = (input: CalendarContentType) => {
   >
     <template #calendarHeader>
       <CalendarHeader
-        v-model:currentDate="currentDate"
+        v-model:currentDate="testDate"
       ></CalendarHeader>
     </template>
   </Calendar>

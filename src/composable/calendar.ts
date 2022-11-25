@@ -1,4 +1,4 @@
-import { computed, ref, Ref } from 'vue';
+import { computed, ComputedGetter, ComputedRef, ref, Ref } from 'vue';
 
 export interface CalendarRowType {
   id: string;
@@ -27,15 +27,20 @@ export interface CalendarHolidayType {
   HolidayName: string;
 }
 
+export interface CalendarSimplifiedType {
+  year: number;
+  month: number;
+}
+
 export function useCalendar(
   inputDate?: Date,
   options?: CalendarOptionsType
 ) {
-  const currentDate = ref(inputDate ?? new Date());
+  const currentDate: Ref<Date> = ref(inputDate ?? new Date());
   const currentHolidayList: Ref<CalendarHolidayType[]> = ref(options?.holidayList ?? []);
   const currentEventList: Ref<CalendarEventType[]> = ref(options?.eventList ?? []);
 
-  const weekName = ref([
+  const weekName: Ref<string[]> = ref([
     '週日', 
     '週一', 
     '週二', 
@@ -45,7 +50,7 @@ export function useCalendar(
     '週六', 
   ]);
 
-  const generatedRandomId = () => {
+  const generatedRandomId = (): string => {
     return Math.random().toString(16).slice(2);
   }
 
@@ -77,36 +82,43 @@ export function useCalendar(
     return addDate(-1, nextMonthCurrent);
   }
 
-  const setNewHolidayList = (holidayList: CalendarHolidayType[]) => {
+  const setNewHolidayList = (holidayList: CalendarHolidayType[]): void => {
     currentHolidayList.value = holidayList;
   }
 
-  const setNewEventList = (eventList: CalendarEventType[]) => {
+  const setNewEventList = (eventList: CalendarEventType[]): void => {
     currentEventList.value = eventList;
   }
 
-  const dateFormatToMainTitle = (inputDate: Date) => {
+  const dateFormatToMainTitle = (inputDate: Date): string => {
     const yyyy = inputDate.getFullYear();
     let MM = (inputDate.getMonth() + 1).toString();
     if (MM.length === 1) { MM = `0${MM}` }
     return `${yyyy}年${MM}月`
   }
 
-  const currentMonth = computed(() => currentDate.value.getMonth());
+  const dateFormatToMainTitleFromCalendarSimplified = (
+    inputDate: CalendarSimplifiedType,
+  ): string => {
+    const dateFromCalendarSimplified = new Date(inputDate.year, inputDate.month - 1);
+    return dateFormatToMainTitle(dateFromCalendarSimplified);
+  }
 
-  const getFirstCalendarDate = computed(() => {
+  const currentMonth: ComputedRef<number> = computed(() => currentDate.value.getMonth());
+
+  const getFirstCalendarDate: ComputedRef<Date> = computed(() => {
     const firstDayDate = getFirstDayDateOfCurrent();
     const firstDayOfWeek = firstDayDate.getDay();
     return addDate(-1 * firstDayOfWeek, firstDayDate);
   })
 
-  const getLastCalendarDate = computed(() => {
+  const getLastCalendarDate: ComputedRef<Date> = computed(() => {
     const lastDayDate = getLastDayDateOfCurrent();
     const lastDayOfWeekRemaining = 6 - lastDayDate.getDay();
     return addDate(lastDayOfWeekRemaining, lastDayDate);
   })
 
-  const getCurrentCalendarArray = computed(() => {
+  const getCurrentCalendarArray: ComputedRef<CalendarRowType[]> = computed(() => {
     const calendarArray: CalendarRowType[] = [];
     let tempArray: CalendarContentType[] = [];
     let targetDate = getFirstCalendarDate.value;
@@ -160,6 +172,7 @@ export function useCalendar(
     setNewHolidayList,
     setNewEventList,
     dateFormatToMainTitle,
+    dateFormatToMainTitleFromCalendarSimplified,
     currentMonth,
     getFirstCalendarDate,
     getLastCalendarDate,

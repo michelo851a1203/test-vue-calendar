@@ -1,28 +1,39 @@
 <script setup lang="ts">
 import { useCalendar } from '../composable/calendar';
+import type { CalendarSimplifiedType } from '../composable/calendar';
 
 const props = withDefaults(defineProps<{
-  currentDate: Date;
+  currentDate: CalendarSimplifiedType;
 }>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'update:currentDate', inputDate: Date): void;
+  (e: 'update:currentDate', inputDate: CalendarSimplifiedType): void;
 }>()
 
 const {
-  dateFormatToMainTitle,
+  dateFormatToMainTitleFromCalendarSimplified,
   addMonth,
 } = useCalendar();
 
 const previewMonthClick = () => {
-  const previousMonth = addMonth(-1, props.currentDate);
-  emit('update:currentDate', previousMonth);
+  const currentDateObject = props.currentDate;
+  const currentDate = new Date(currentDateObject.year, currentDateObject.month - 1);
+  const resultDate = addMonth(-1, currentDate);
+  emit('update:currentDate', {
+    year: resultDate.getFullYear(),
+    month: resultDate.getMonth() + 1,
+  })
 }
 
 const nextMonthClick = () => {
-  const previousMonth = addMonth(1, props.currentDate);
-  emit('update:currentDate', previousMonth);
+  const currentDateObject = props.currentDate;
+  const currentDate = new Date(currentDateObject.year, currentDateObject.month - 1);
+  const resultDate = addMonth(1, currentDate);
+  emit('update:currentDate', {
+    year: resultDate.getFullYear(),
+    month: resultDate.getMonth() + 1,
+  })
 }
 
 </script>
@@ -31,11 +42,11 @@ const nextMonthClick = () => {
 <section
   class="flex items-center px-3 py-4 space-x-2 w-full box-border"
 >
-  <div class="flex items-center flex-grow">
+  <div class="flex items-center flex-grow space-x-4">
     <div
       class="text-xl font-bold"
     >
-      {{ dateFormatToMainTitle(currentDate) }}
+      {{ dateFormatToMainTitleFromCalendarSimplified(currentDate) }}
     </div>
     <button
       @click="previewMonthClick"
