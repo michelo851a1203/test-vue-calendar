@@ -1,39 +1,32 @@
 <script setup lang="ts">
 import { useCalendar } from '../composable/calendar';
-import type { CalendarSimplifiedType } from '../composable/calendar';
 
 const props = withDefaults(defineProps<{
-  currentDate: CalendarSimplifiedType;
+  currentDate: string;
 }>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'update:currentDate', inputDate: CalendarSimplifiedType): void;
+  (e: 'update:currentDate', inputDate: string): void;
 }>()
 
 const {
-  dateFormatToMainTitleFromCalendarSimplified,
+  dateFormatToMainTitleFromString,
   addMonth,
 } = useCalendar();
 
 const previewMonthClick = () => {
-  const currentDateObject = props.currentDate;
-  const currentDate = new Date(currentDateObject.year, currentDateObject.month - 1);
-  const resultDate = addMonth(-1, currentDate);
-  emit('update:currentDate', {
-    year: resultDate.getFullYear(),
-    month: resultDate.getMonth() + 1,
-  })
+  if (Number.isNaN(Date.parse(props.currentDate))) return;
+  const currentDate = new Date(props.currentDate);
+  const newCurrentDate = addMonth(-1, currentDate);
+  emit('update:currentDate', newCurrentDate.toDateString());
 }
 
 const nextMonthClick = () => {
-  const currentDateObject = props.currentDate;
-  const currentDate = new Date(currentDateObject.year, currentDateObject.month - 1);
-  const resultDate = addMonth(1, currentDate);
-  emit('update:currentDate', {
-    year: resultDate.getFullYear(),
-    month: resultDate.getMonth() + 1,
-  })
+  if (Number.isNaN(Date.parse(props.currentDate))) return;
+  const currentDate = new Date(props.currentDate);
+  const newCurrentDate = addMonth(1, currentDate);
+  emit('update:currentDate', newCurrentDate.toDateString());
 }
 
 </script>
@@ -46,7 +39,7 @@ const nextMonthClick = () => {
     <div
       class="text-xl font-bold"
     >
-      {{ dateFormatToMainTitleFromCalendarSimplified(currentDate) }}
+      {{ dateFormatToMainTitleFromString(currentDate) }}
     </div>
     <button
       @click="previewMonthClick"

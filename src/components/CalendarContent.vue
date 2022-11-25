@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useCalendar  } from '../composable/calendar';
+import { useCalendar } from '../composable/calendar';
 import type { CalendarContentType } from '../composable/calendar'
+import { watch } from 'vue';
 const props = withDefaults(defineProps<{
   currentDate: Date;
 }>(), {
@@ -13,7 +14,12 @@ const emit = defineEmits<{
 const {
   getCurrentCalendarArray,
   currentMonth,
+  setCurrentDate,
 } = useCalendar(props.currentDate);
+
+watch(() => props.currentDate, (newUpdatedCurrentDate: Date) => {
+  setCurrentDate(newUpdatedCurrentDate);
+});
 
 const emitEventFromContentToCalendar = (inputEvent: CalendarContentType) => {
   emit('update:editEvent', inputEvent);

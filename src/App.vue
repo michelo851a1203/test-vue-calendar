@@ -4,7 +4,7 @@ import Calendar from './components/Calendar.vue';
 import type { 
   CalendarContentType,
 } from './composable/calendar';
-const currentDate = ref(new Date());
+const currentDate = ref((new Date()).toDateString());
 
 const testEvent = (input: CalendarContentType) => {
   console.log(input);
@@ -14,7 +14,7 @@ const testEvent = (input: CalendarContentType) => {
 
 <template>
   <Calendar
-    :currentDate="currentDate"
+    v-model:currentDate="currentDate"
     @update:editEvent="testEvent"
   ></Calendar>
 </template>

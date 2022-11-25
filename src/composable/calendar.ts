@@ -1,4 +1,4 @@
-import { computed, ComputedGetter, ComputedRef, ref, Ref } from 'vue';
+import { computed,  ComputedRef, ref, Ref } from 'vue';
 
 export interface CalendarRowType {
   id: string;
@@ -27,10 +27,6 @@ export interface CalendarHolidayType {
   HolidayName: string;
 }
 
-export interface CalendarSimplifiedType {
-  year: number;
-  month: number;
-}
 
 export function useCalendar(
   inputDate?: Date,
@@ -52,6 +48,10 @@ export function useCalendar(
 
   const generatedRandomId = (): string => {
     return Math.random().toString(16).slice(2);
+  }
+
+  const setCurrentDate = (newDate: Date) => {
+    currentDate.value = newDate;
   }
 
   const addDate = (
@@ -97,10 +97,11 @@ export function useCalendar(
     return `${yyyy}年${MM}月`
   }
 
-  const dateFormatToMainTitleFromCalendarSimplified = (
-    inputDate: CalendarSimplifiedType,
+  const dateFormatToMainTitleFromString = (
+    inputDate: string,
   ): string => {
-    const dateFromCalendarSimplified = new Date(inputDate.year, inputDate.month - 1);
+    if (Number.isNaN(Date.parse(inputDate))) return '';
+    const dateFromCalendarSimplified = new Date(inputDate);
     return dateFormatToMainTitle(dateFromCalendarSimplified);
   }
 
@@ -165,6 +166,7 @@ export function useCalendar(
     currentEventList,
     weekName,
     generatedRandomId,
+    setCurrentDate,
     addDate,
     addMonth,
     getFirstDayDateOfCurrent,
@@ -172,7 +174,7 @@ export function useCalendar(
     setNewHolidayList,
     setNewEventList,
     dateFormatToMainTitle,
-    dateFormatToMainTitleFromCalendarSimplified,
+    dateFormatToMainTitleFromString,
     currentMonth,
     getFirstCalendarDate,
     getLastCalendarDate,
