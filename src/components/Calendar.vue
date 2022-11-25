@@ -4,13 +4,20 @@
   }
 </script>
 <script setup lang="ts">
-import type { CalendarContentType } from '../composable/calendar';
+import type { CalendarContentType, CalendarSimplifiedType } from '../composable/calendar';
 import CalendarContent from './CalendarContent.vue';
 import CalendarWeekTitle from './CalendarWeekTitle.vue';
+import CalendarHeader from './CalendarHeader.vue';
+import { Ref, ref } from 'vue';
 const props = withDefaults(defineProps<{
   currentDate: Date;
 }>(), {
 });
+
+const currentCalendarSimplified: Ref<CalendarSimplifiedType> = ref({
+  year: props.currentDate.getFullYear(),
+  month: props.currentDate.getMonth() + 1,
+})
 
 const emit = defineEmits<{
   (e: 'update:editEvent', inputEvent: CalendarContentType): void;
@@ -27,7 +34,9 @@ const implementToEditCalendarEvent = (inputEvent: CalendarContentType) => {
     v-bind="$attrs"
     class="w-full"
   >
-    <slot name="calendarHeader"></slot>
+    <CalendarHeader
+      v-model:currentDate="currentCalendarSimplified"
+    ></CalendarHeader>
     <section
       class="mt-2"
     >
