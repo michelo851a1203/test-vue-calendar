@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import {
+import type {
+  CalendarHolidayType,
   AddedCalendarEventType,
+} from '../composable/calendar'
+import {
   useCalendar,
 } from '../composable/calendar';
 import type { CalendarContentType } from '../composable/calendar'
 import { watch } from 'vue';
 const props = withDefaults(defineProps<{
   currentDate: Date;
+  holidayList?: CalendarHolidayType[]
   newEvent: AddedCalendarEventType | null;
 }>(), {
+  holidayList: () => [] as CalendarHolidayType[],
 })
 
 const emit = defineEmits<{
@@ -21,6 +26,7 @@ const {
   currentMonth,
   setCurrentDate,
   addEvent,
+  setNewHolidayList,
 } = useCalendar(props.currentDate);
 
 watch(() => props.currentDate, (newUpdatedCurrentDate: Date) => {

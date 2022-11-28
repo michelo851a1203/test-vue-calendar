@@ -14,18 +14,34 @@ const getCurrentEvent = (input: CalendarContentType) => {
 
 const addOrUpdateEvent = () => {
   addedNewEvent.value = {
-    dateTitle: '12/5',
+    dateTitle: '11/28',
     eventName: 'testing'
   }
+}
+
+const getAddedEventReturnId = (id: string) => {
+  console.group('%c 這裡可以拿到剛才編輯或新增事件的 id', 'color: yellow;');
+  console.log(id);
+  console.groupEnd();
 }
 
 </script>
 
 <template>
+  <button
+    class="
+      px-3 py-2 rounded-full 
+      bg-blue-400 text-white border-none hover:bg-blue-800
+      cursor-pointer
+    "
+    @click="addOrUpdateEvent"
+  >Add Event Test</button>
+
   <Calendar
     v-model:newEvent="addedNewEvent"
     v-model:currentDate="currentDate"
     @update:editEvent="getCurrentEvent"
+    @update:returnNewEventResponse="getAddedEventReturnId"
   ></Calendar>
 </template>
 
