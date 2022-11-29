@@ -78,6 +78,16 @@ export function useCalendar(
     return newEventInfo.id;
   }
 
+  const updateEvent = (updatedEvent: CalendarEventType): boolean => {
+    const updatedIndex = currentEventList.value.findIndex(
+      eventItem => eventItem.id === updatedEvent.id
+    );
+    if (updatedIndex === -1) return false;
+    currentEventList.value[updatedIndex].dateTitle = updatedEvent.dateTitle;
+    currentEventList.value[updatedIndex].eventName = updatedEvent.eventName;
+    return true;
+  }
+
   const deleteEvent = (id: string) => {
     const deleteIndex = currentEventList.value.findIndex(
       item => item.id === id
@@ -205,6 +215,7 @@ export function useCalendar(
     setCurrentHolidayList,
     setCurrentEventList,
     addEvent,
+    updateEvent,
     deleteEvent,
     addDate,
     addMonth,

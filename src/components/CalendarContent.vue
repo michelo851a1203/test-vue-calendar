@@ -2,6 +2,7 @@
 import type {
   CalendarHolidayType,
   AddedCalendarEventType,
+  CalendarEventType,
 } from '../composable/calendar'
 import {
   useCalendar,
@@ -10,8 +11,9 @@ import type { CalendarContentType } from '../composable/calendar'
 import { watch } from 'vue';
 const props = withDefaults(defineProps<{
   currentDate: Date;
-  holidayList?: CalendarHolidayType[]
+  holidayList?: CalendarHolidayType[];
   newEvent: AddedCalendarEventType | null;
+  updatedEvent: CalendarEventType | null;
 }>(), {
   holidayList: () => [] as CalendarHolidayType[],
 })
@@ -19,6 +21,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   (e: 'update:editEvent', inputEvent: CalendarContentType): void;
   (e: 'update:returnNewEventResponse', id: string): void;
+  (e: 'update:isUpdatedEventSuccess', isUpdated: boolean): void;
 }>()
 
 const {
@@ -26,8 +29,11 @@ const {
   currentMonth,
   setCurrentDate,
   addEvent,
+  updateEvent,
   setNewHolidayList,
 } = useCalendar(props.currentDate);
+
+setNewHolidayList(props.holidayList);
 
 watch(() => props.currentDate, (newUpdatedCurrentDate: Date) => {
   setCurrentDate(newUpdatedCurrentDate);
@@ -38,6 +44,17 @@ watch(() => props.newEvent, (newEventInfo: AddedCalendarEventType | null) => {
   const id = addEvent(newEventInfo);
   emit('update:returnNewEventResponse', id);
 });
+
+watch(() => props.updatedEvent, (updatedEventInfo: CalendarEventType | null) => {
+  if (updatedEventInfo === null) return;
+  const isUpdated = updateEvent(updatedEventInfo);
+  emit('update:isUpdatedEventSuccess', isUpdated);
+});
+
+watch(() => props.holidayList, (newHolidayList?: CalendarHolidayType[]) => {
+  if (typeof newHolidayList === 'undefined') return;
+  setNewHolidayList(newHolidayList);
+})
 
 const emitEventFromContentToCalendar = (inputEvent: CalendarContentType) => {
   emit('update:editEvent', inputEvent);
